@@ -15,4 +15,9 @@ db.once("open", () => console.log("Database connected"));
 
 app.use(express.json());
 app.use("/user", userRouter);
+
+app.use((error, req, res, next) => {
+  res.send({ message: error.message });
+});
+
 app.listen(PORT, () => console.log("Listening on http://localhost" + PORT));

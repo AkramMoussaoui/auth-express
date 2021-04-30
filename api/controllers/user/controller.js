@@ -66,7 +66,31 @@ const loginUser = async (req, res) => {
   }
 };
 
-const getInfoUser = (req, res) => {};
+const getInfoUser = async (req, res) => {
+  try {
+    const data = req.data;
+    const user = await User.findOne({ email: data.email }, "-_id -password");
+    if (!user) {
+      return res.status(400).json({
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      message: "Fetched successfully",
+      data: user,
+    });
+  } catch (error) {
+    let message = "Server error";
+    console.log("Error loginUser =>", error);
+    if (error.toString().includes("JsonWebTokenError")) {
+      message = "Error in token";
+    }
+    res.status(500).json({
+      message,
+    });
+  }
+};
 
 module.exports = {
   signupUser,
