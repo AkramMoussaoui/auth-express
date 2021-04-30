@@ -31,7 +31,40 @@ const signupUser = async (req, res) => {
   }
 };
 
-const loginUser = (req, res) => {};
+const loginUser = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({
+        message: "user not found",
+      });
+    }
+    const compare = await bcrypt.compare(password, user.password);
+    if (compare == false) {
+      return res.status(400).json({
+        message: "wrong credentials",
+      });
+    }
+    const token = jwt.sign({ email: user.email }, process.env.PRIVATE_KEY);
+    if (!token) {
+      return res.status(500).json({
+        message: "Server error",
+      });
+    }
+    return res.status(200).json({
+      message: "login successful",
+      data: {
+        access_token: token,
+      },
+    });
+  } catch (error) {
+    console.log("Error loginUser =>", error);
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
 
 const getInfoUser = (req, res) => {};
 

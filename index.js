@@ -14,5 +14,5 @@ const db = mongoose.connection;
 db.once("open", () => console.log("Database connected"));
 
 app.use(express.json());
-app.use("user", userRouter);
+app.use("/user", userRouter);
 app.listen(PORT, () => console.log("Listening on http://localhost" + PORT));
